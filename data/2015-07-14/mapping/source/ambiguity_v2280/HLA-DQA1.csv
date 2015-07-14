@@ -1,0 +1,38 @@
+"HLA-DQA1 Ambiguities, Release 2.28.0",,,,,,,
+,,,,,,,
+"Sequences identical over exon 2",,,,,,,
+,,,,,,,
+"Allele 1","Allele 2","Allele 3","Allele 4","Allele 5","Allele 6","Allele 7","Code in table"
+" "," "," "," "," "," "," "," "
+DQA1*010101,DQA1*010102,DQA1*010401,DQA1*010402,DQA1*0105," "," ",DQA1*01G1
+DQA1*010201,DQA1*010202,DQA1*010203,DQA1*010204," "," "," ",DQA1*0102G1
+DQA1*030101,DQA1*0302,DQA1*0303," "," "," "," ",DQA1*03G1
+DQA1*040101,DQA1*040102,DQA1*0402,DQA1*0404," "," "," ",DQA1*04G1
+DQA1*050101,DQA1*0503,DQA1*0505,DQA1*0506,DQA1*0507,DQA1*0508,DQA1*0509,DQA1*05G1
+DQA1*060101,DQA1*0602," "," "," "," "," ",DQA1*060101/0602
+" "," "," "," "," "," "," "," "
+" ",,,,,,,
+"Alleles extended due to unsequenced regions",,,,,,,
+" ",,,,,,,
+"The following alleles do not contain the complete exon 2 sequence. For these alleles, the sequence of an alternate allele has been used to extend the sequence to cover this region.",,,,,,,
+" ",,,,,,,
+"Incomplete allele","Sequence extended with",,,,,,
+" "," ",,,,,,
+DQA1*050102,DQA1*050101,,,,,,
+DQA1*0502,DQA1*050101,,,,,,
+DQA1*060102,DQA1*060101,,,,,,
+" "," ",,,,,,
+" ",,,,,,,
+"Alleles removed from analysis due to insertions or deletions",,,,,,,
+" ",,,,,,,
+Allele,,,,,,,
+" ",,,,,,,
+None,,,,,,,
+" ",,,,,,,
+" ",,,,,,,
+"Ambiguous typing combinations over exon 2",,,,,,,
+" ",,,,,,,
+"Combination 1","Combination 2",,,,,,
+" "," ",,,,,,
+None,,,,,,,
+" "," ",,,,,,
