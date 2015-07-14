@@ -1,0 +1,16 @@
+#!/bin/bash
+set -e -o pipefail
+base=$(dirname $0)
+
+export PERL5LIB=$PERL5LIB:~/src/Bio-HLA-Nomenclature/lib/
+
+for hla in $base/groups/HLA-*.csv; do
+    recs fromcsv $hla \
+        | recs xform -E transform-groups.recs \
+        | recs tocsv --noheader -k old_group,new_group,old_allele,new_allele
+done \
+    | recs fromcsv -k old_group,new_group,old_allele,new_allele \
+    | recs grep '{{new_group}}' \
+    | recs collate -k old_group,new_group \
+    | recs sort -k old_group \
+    | recs eval 'join ";", {{old_group}}, {{new_group}}'

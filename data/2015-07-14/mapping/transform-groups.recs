@@ -1,0 +1,41 @@
+# This is a recs <https://recs.pl> snippet for use with `recs xform`.
+# vim: set ft=perl :
+use 5.018;
+use utf8;
+use open qw< :std :encoding(UTF-8) >;
+use strict;
+use warnings;
+use List::Util qw< max >;
+use Bio::HLA::Nomenclature::Converter;
+use Bio::HLA::Nomenclature::AmbiguousGroups;
+
+state $converter = Bio::HLA::Nomenclature::Converter->new;
+state $ambiguous = Bio::HLA::Nomenclature::AmbiguousGroups->new;
+
+my $old_group = delete $r->{ max keys %$r };
+my @old_alleles =
+    grep { defined and /\S/ }
+     map { $r->{$_} }
+    sort { $a <=> $b }
+    keys %$r;
+
+for my $old_allele (@old_alleles) {
+    # Special case, manually checked
+    $old_allele .= "01"
+        if $old_allele eq "B*3542";
+
+    my $new_allele = $converter->from_2009($old_allele);
+
+    die "Don't know how to convert «$old_allele» from 2009 nomenclature"
+        unless $new_allele;
+
+    my $new_group = $ambiguous->g_group($new_allele)
+                 // $ambiguous->p_group($new_allele);
+
+    push_output({
+        old_group   => $old_group,
+        new_group   => $new_group,
+        old_allele  => $old_allele,
+        new_allele  => $new_allele,
+    });
+}

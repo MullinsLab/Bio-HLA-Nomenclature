@@ -1,0 +1,8 @@
+recs fromsplit -d ';' -k old,new groups-v2.28.0-to-v3.0.0.txt | recs collate -k old -a count -a uarray,new | recs grep '{{count}} > 1' | recs totable -k old,uarray_new
+
+old                  uarray_new
+------------------   --------------------------------
+DRB1*010101/010105   ["DRB1*01:01:01G","DRB1*01:01P"]
+DRB1*040701/040703   ["DRB1*04:07:01G","DRB1*04:07P"]
+DRB1*0801G1          ["DRB1*08:01:01G","DRB1*08:01P"]
+DRB1*1101G1          ["DRB1*11:01:01G","DRB1*11:01P"]
