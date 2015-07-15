@@ -2,12 +2,12 @@
 use strict;
 use warnings;
 
-use 5.008005;
+use 5.010;
 
 use ExtUtils::MakeMaker;
 
 my %WriteMakefileArgs = (
-  "ABSTRACT" => "Blah blah blah",
+  "ABSTRACT" => "Programmatic handling of HLA allele names",
   "AUTHOR" => "Thomas Sibley <trsibley\@uw.edu>",
   "CONFIGURE_REQUIRES" => {
     "ExtUtils::MakeMaker" => 0
@@ -15,9 +15,14 @@ my %WriteMakefileArgs = (
   "DISTNAME" => "Bio-HLA-Nomenclature",
   "EXE_FILES" => [],
   "LICENSE" => "perl",
-  "MIN_PERL_VERSION" => "5.008005",
+  "MIN_PERL_VERSION" => "5.010",
   "NAME" => "Bio::HLA::Nomenclature",
-  "PREREQ_PM" => {},
+  "PREREQ_PM" => {
+    "Moo" => 2,
+    "MooX::ClassAttribute" => 0,
+    "Types::Standard" => 0,
+    "namespace::autoclean" => 0
+  },
   "TEST_REQUIRES" => {
     "Test::More" => "0.96"
   },
@@ -30,7 +35,11 @@ my %WriteMakefileArgs = (
 
 my %FallbackPrereqs = (
   "ExtUtils::MakeMaker" => 0,
-  "Test::More" => "0.96"
+  "Moo" => 2,
+  "MooX::ClassAttribute" => 0,
+  "Test::More" => "0.96",
+  "Types::Standard" => 0,
+  "namespace::autoclean" => 0
 );
 
 

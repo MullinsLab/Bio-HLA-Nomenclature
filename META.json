@@ -1,5 +1,5 @@
 {
-   "abstract" : "Blah blah blah",
+   "abstract" : "Programmatic handling of HLA allele names",
    "author" : [
       "Thomas Sibley <trsibley@uw.edu>"
    ],
@@ -37,7 +37,11 @@
       },
       "runtime" : {
          "requires" : {
-            "perl" : "5.008005"
+            "Moo" : "2",
+            "MooX::ClassAttribute" : "0",
+            "Types::Standard" : "0",
+            "namespace::autoclean" : "0",
+            "perl" : "5.010"
          }
       },
       "test" : {
