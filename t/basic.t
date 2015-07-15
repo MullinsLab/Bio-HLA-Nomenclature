@@ -9,6 +9,10 @@ subtest "Converter" => sub {
         qw(Cw*0432 B*9502 B*1305);
 
     is_deeply \@converted, [qw[ C*04:32 B*15:102 ], undef];
+
+    @converted = map { $converter->from_2009_group($_) }
+        qw(Cw*07G1);
+    is_deeply \@converted, [qw[ C*07:01:01G ]];
 };
 
 subtest "AmbiguousGroups" => sub {

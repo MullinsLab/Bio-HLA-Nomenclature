@@ -24,6 +24,10 @@ new 2010 nomenclature
         for qw(Cw*0432 B*9502 B*1305);
     
     # prints: C*04:32, B*15:102, None
+    
+    say $converter->from_2009_group("Cw*07G1");
+    
+    # prints: C*07:01:01G
 
 =head1 DESCRIPTION
 
@@ -44,24 +48,41 @@ For more information, refer to the following sources:
 
 This library uses a copy of
 L<Nomenclature_2009.txt|ftp://ftp.ebi.ac.uk/pub/databases/imgt/mhc/hla/Nomenclature_2009.txt>
-provided by the IMGT/HLA Database.
+provided by the IMGT/HLA Database. 
+
+The groups conversion table was generated specifically for this library in part
+from data provided at the
+L<IMGT/HLA Ambiguous Allele Combinations|http://www.ebi.ac.uk/ipd/imgt/hla/ambig.html>
+page.
 
 =cut
 
-class_has mapping => (
+class_has data_start => (
+    is      => 'ro',
+    isa     => Int,
+    default => sub { tell DATA },
+);
+
+class_has [qw[ allele_mapping group_mapping ]] => (
     is  => 'lazy',
     isa => Map[Str, Maybe[Str]],
 );
 
+sub _build_allele_mapping { $_[0]->_build_mapping("Nomenclature_2009.txt") }
+sub _build_group_mapping  { $_[0]->_build_mapping("groups-v2.28.0-to-v3.0.0.txt") }
 sub _build_mapping {
     my $self = shift;
+    my $file = shift or return;
     my %map;
+    seek DATA, $self->data_start, 0;
     local $_;
     while (<DATA>) {
-        next if /^#/; chomp;
-        my ($old, $new) = split ' ';
-        $new = undef if $new eq "None";
-        $map{$old} = $new;
+        if (/^# file: \Q$file\E/ .. /^$/) {
+            next if /^#/ or not /\S/; chomp;
+            my ($old, $new) = split ' ';
+            $new = undef if $new eq "None";
+            $map{$old} = $new;
+        }
     }
     return \%map;
 }
@@ -75,17 +96,33 @@ in cases where the allele was removed from the database during the nomenclature
 change.  Note that C<undef> will also be returned for unrecognized old names.
 (A future improvement may be allowing callers to distinguish this case.)
 
+=head2 from_2009_group
+
+Takes an old allele group designation (usually ending in C<G1> or containing
+C</>) and returns the new name for it.  C<undef> is returned if the old
+designation is not recognized.
+
+In cases where an old allele group designation could mean either a G-coded or
+P-coded group, G-coded designations are preferentially returned.  This is
+because G-coded designations describe more specific similarity.
+
 =cut
 
 sub from_2009 {
     my $self = shift;
     my $old  = shift;
-    return $self->mapping->{$old};
+    return $self->allele_mapping->{$old};
+}
+
+sub from_2009_group {
+    my $self = shift;
+    my $old  = shift;
+    return $self->group_mapping->{$old};
 }
 
 1;
 __DATA__
-# Nomenclature_2009.txt
+# file: Nomenclature_2009.txt
 # ftp://ftp.ebi.ac.uk/pub/databases/imgt/mhc/hla/Nomenclature_2009.txt
 # Current Name        Name as of April 2010
 # ============        =====================
@@ -4915,3 +4952,141 @@ TAP2*0201           TAP2*02:01
 V*01010101          V*01:01:01:01
 V*01010102          V*01:01:01:02
 V*01010103          V*01:01:01:03
+
+# file: groups-v2.28.0-to-v3.0.0.txt
+# date: 2015-07-15
+# author: Thomas Sibley <trsibley@uw.edu>
+A*01G1	A*01:01:01G
+A*020501/9279	A*02:05:01G
+A*020601/9226	A*02:06:01G
+A*0207/0215N	A*02:07:01G
+A*0211/0269	A*02:11:01G
+A*0216/9231	A*02:16:01G
+A*0217	A*02:17:01G
+A*022201/9204	A*02:22:01G
+A*0281/9224	A*02:81:01G
+A*02G1	A*02:01:01G
+A*03G1	A*03:01:01G
+A*110101/1121N	A*11:01:01G
+A*110201/110203/1153	A*11:02:01G
+A*23G1	A*23:01:01G
+A*240301/2433	A*24:03:01G
+A*24G1	A*24:02:01G
+A*250101/2507	A*25:01:01G
+A*26G1	A*26:01:01G
+A*290101	A*29:01:01G
+A*300101/300102/3024	A*30:01:01G
+A*300201/300202/3033	A*30:02:01G
+A*310102/3114N/3123	A*31:01:02G
+A*320101/320102	A*32:01:01G
+A*33G1	A*33:03:01G
+A*6601/6608	A*66:01:01G
+A*680101/680107	A*68:01:01G
+A*680102/6811N/6833	A*68:01:02G
+A*680201	A*68:02:01G
+A*7401/7402	A*74:01:01G
+B*070501/0706	B*07:05:01G
+B*07G1	B*07:02:01G
+B*080101/0819N	B*08:01:01G
+B*130201/130205	B*13:02:01G
+B*150301/9503	B*15:03:01G
+B*1512/1519	B*15:12:01G
+B*151701	B*15:17:01G
+B*15G1	B*15:01:01G
+B*18G1	B*18:01:01G
+B*270502/270504/2713	B*27:05:02G
+B*350301/3570	B*35:03:01G
+B*3543/3567/3579	B*35:43:01G
+B*35G1	B*35:01:01G
+B*380201/3818	B*38:02:01G
+B*39G1	B*39:01:01G
+B*400201/4056/4097	B*40:02:01G
+B*400601	B*40:06:01G
+B*40G1	B*40:01:01G
+B*440301/440303/440304	B*44:03:01G
+B*44G1	B*44:02:01G
+B*4501/4507	B*45:01:01G
+B*460101/4615N	B*46:01:01G
+B*470101	B*47:01:01G
+B*480101/4809	B*48:01:01G
+B*51G1	B*51:01:01G
+B*520101/5207	B*52:01:01G
+B*5401/5417	B*54:01:01G
+B*550101/550103	B*55:01:01G
+B*550201/550205	B*55:02:01G
+B*5601/5624	B*56:01:01G
+B*570101/5729	B*57:01:01G
+B*580101/580104/5811	B*58:01:01G
+B*8101/8102/8103	B*81:01:01G
+B*9523/9551	B*15:123:01G
+Cw*010201/010202/0125	C*01:02:01G
+Cw*0103/0124	C*01:03:01G
+Cw*020202/0229	C*02:02:02G
+Cw*0302G1	C*03:02:01G
+Cw*030401/030403	C*03:04:01G
+Cw*03G2	C*03:03:01G
+Cw*04G1	C*04:01:01G
+Cw*05G1	C*05:01:01G
+Cw*060201/060203	C*06:02:01G
+Cw*070401/0711	C*07:04:01G
+Cw*07G1	C*07:01:01G
+Cw*07G2	C*07:02:01G
+Cw*08G1	C*08:01:01G
+Cw*120201/120202	C*12:02:01G
+Cw*12G1	C*12:03:01G
+Cw*150201/1513	C*15:02:01G
+Cw*1505G1	C*15:05:01G
+Cw*17G1	C*17:01:01G
+Cw*1801/1802	C*18:01:01G
+DPB1*030101/0502/2702	DPB1*03:01:01G
+DPB1*0402/0602	DPB1*04:02:01G
+DPB1*0501	DPB1*05:01:01G
+DPB1*0802/1901	DPB1*19:01:01G
+DPB1*0902/1301	DPB1*13:01:01G
+DQA1*0102G1	DQA1*01:02:01G
+DQA1*01G1	DQA1*01:01:01G
+DQA1*03G1	DQA1*03:01:01G
+DQA1*04G1	DQA1*04:01:01G
+DQA1*05G1	DQA1*05:01:01G
+DQA1*060101/0602	DQA1*06:01:01G
+DQB1*020101/0202/0204	DQB1*02:01:01G
+DQB1*03G1	DQB1*03:01:01G
+DQB1*06G1	DQB1*06:01:01G
+DQB1*06G2	DQB1*06:04:01G
+DRB1*010101/010105	DRB1*01:01:01G
+DRB1*0301G1	DRB1*03:01:01G
+DRB1*030501/030502	DRB1*03:05P
+DRB1*040301/040303	DRB1*04:03P
+DRB1*0405G1	DRB1*04:05P
+DRB1*040601/040602	DRB1*04:06:01G
+DRB1*040701/040703	DRB1*04:07:01G
+DRB1*041701/041702	DRB1*04:17P
+DRB1*070101	DRB1*07:01:01G
+DRB1*0801G1	DRB1*08:01:01G
+DRB1*080201/080202	DRB1*08:02P
+DRB1*080401/080404	DRB1*08:04P
+DRB1*080402/080403	DRB1*08:04P
+DRB1*110103/110111	DRB1*11:01P
+DRB1*1101G1	DRB1*11:01:01G
+DRB1*110401/110402	DRB1*11:04P
+DRB1*110801/110802	DRB1*11:08P
+DRB1*111001/111002	DRB1*11:10P
+DRB1*111101/111102	DRB1*11:11:01G
+DRB1*111301/111302	DRB1*11:13:01G
+DRB1*111401/111402	DRB1*11:14P
+DRB1*116501/116502	DRB1*11:65P
+DRB1*12G1	DRB1*12:01:01G
+DRB1*130301/130302	DRB1*13:03P
+DRB1*130501/130502	DRB1*13:05P
+DRB1*131401/131403	DRB1*13:14P
+DRB1*132101/132102	DRB1*13:21P
+DRB1*133302/133303	DRB1*13:33P
+DRB1*140101/1454	DRB1*14:01:01G
+DRB1*140601/140602	DRB1*14:06P
+DRB1*140701/140702	DRB1*14:07P
+DRB1*150101	DRB1*15:01:01G
+DRB1*150202/150205	DRB1*15:02P
+DRB1*150301	DRB1*15:03:01G
+DRB3*010102	DRB3*01:01:02G
+DRB3*0201/0224	DRB3*02:01:01G
+DRB3*030101/030103	DRB3*03:01:01G
