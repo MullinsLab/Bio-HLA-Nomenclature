@@ -1,0 +1,8 @@
+/Bio-HLA-Nomenclature-*
+/Makefile
+/Makefile.old
+/blib
+MYMETA.*
+!META.json
+/.prove
+/.build
