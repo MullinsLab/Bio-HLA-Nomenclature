@@ -3,6 +3,9 @@ use Test::More;
 use Bio::HLA::Nomenclature::AmbiguousGroups;
 use Bio::HLA::Nomenclature::Converter;
 
+# XXX TODO: Test parse_allele on new and old nomenclatures, workshop and
+# non-workshop, and ambiguous groups to exercise a broad range of cases.
+
 subtest "Converter" => sub {
     my $converter = Bio::HLA::Nomenclature::Converter->new;
     my @converted = map { $converter->from_2009($_) }
